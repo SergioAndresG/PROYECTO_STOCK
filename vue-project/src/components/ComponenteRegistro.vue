@@ -4,7 +4,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 
 // Define tus variables reactivas usando ref o reactive
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const nombreEmprendimiento = ref('');
 const tipoEmprendimiento = ref('');
@@ -13,7 +13,34 @@ const nombreRegistro = ref('');
 const documento = ref('');
 const correoElectronico = ref('');
 const contrasena = ref('');
+const confirmPassowrd = ref('');
+const passwordVisible = ref(false); // Controla si la contraseña es visible o no
 const rol = ref('');
+
+const passwordFieldType = computed(() => (passwordFieldType.value ? 'text' : 'password'))
+
+function validarContrasena() {
+  const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+  
+  if (!regex.test(contrasena.value)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Contraseña no válida',
+      text: 'La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales.'
+    });
+    return false; // Indica que la validación falló
+  }
+  if (contrasena.value !== confirmPassowrd.value) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Contraseña no coincide',
+      text: 'Las contraseñas no coinciden.'
+    });
+    return false; // Indica que la validación falló
+  }
+
+  return true; // Indica que la validación fue exitosa
+}
 
 async function registrar() {
   // Validación básica
@@ -89,6 +116,7 @@ async function registrar() {
       });
     }
   }
+
 }
 
 // Función para resetear el formulario
@@ -131,7 +159,12 @@ function resetForm() {
         <input type="text" id="nombre-emprendimiento" v-model="nombreEmprendimiento" />
 
         <label for="tipo-emprendimiento">Tipo de emprendimiento:</label>
-        <input type="text" id="tipo-emprendimiento" v-model="tipoEmprendimiento" />
+        <select v-model="tipoEmprendimiento">
+          <option value="FastFood">Comidas Rapidas</option>
+          <option value="CoffeShop">Cafeteria</option>
+          <option value="Bakery">Panaderia</option>
+          <option value="Restaurant">Restaurante</option>
+        </select>
 
         <label for="numero-empleados">Número de empleados:</label>
         <input type="number" id="numero-empleados" v-model="numeroEmpleados" />
@@ -150,8 +183,19 @@ function resetForm() {
         <input type="email" id="correo-electronico" v-model="correoElectronico" />
 
         <label for="contrasena">Contraseña:</label>
-        <input type="password" id="contrasena" v-model="contrasena" />
-      </div>
+
+        <div class="input-container">
+            <input :type="passwordVisible ? 'text' : 'password'" id="contrasena" v-model="contrasena" />
+            <span @click="passwordVisible = !passwordVisible" class="toggle-password">
+              <i :class="passwordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+            </span>
+        </div>
+        <label for="confirmarContrasena">Confirma la Contraseña</label>
+        <input :type="passwordVisible ? 'text' : 'password'" v-model="confirmPassowrd" @input="validarContrasena" />
+        <span @click="passwordVisible = !passwordVisible" class="toggle-password">
+              <i :class="passwordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+            </span>
+</div>
 
       <div class="form-section">
         <h2>Selección de Rol</h2>
@@ -221,6 +265,34 @@ function resetForm() {
 </template>
 
 <style scoped>
+/* Contenedor para el input y el ícono del ojo */
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Input de contraseña */
+.input-container input {
+  width: 100%;
+  padding-right: 40px; /* Espacio suficiente para el icono */
+}
+
+/* Ícono del ojo */
+.toggle-password {
+  position: absolute;
+  right: 10px; /* Espacio entre el icono y el borde derecho del input */
+  cursor: pointer;
+  color: #888;
+  font-size: 1.2em;
+  top: 3px;
+}
+
+/* Ajuste cuando el usuario pasa el cursor sobre el icono */
+.toggle-password:hover {
+  color: #000;
+}
+
 body{
     font-family: 'Jura', sans-serif;
     font-weight:normal;
