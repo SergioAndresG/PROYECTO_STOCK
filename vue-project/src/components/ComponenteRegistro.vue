@@ -129,6 +129,7 @@ function resetForm() {
   correoElectronico.value = '';
   contrasena.value = '';
   rol.value = '';
+  confirmPassowrd.value = '';
 }
 </script>
 

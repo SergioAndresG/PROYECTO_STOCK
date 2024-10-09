@@ -2,6 +2,7 @@
 import ComponenteImagen from './icons/IMAGENES/ComponenteImagen.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'; // Importa el router
+import axios from 'axios';
 
 // Definición de variables reactivas
 const NombreEmprendimineto = ref('');
@@ -10,25 +11,39 @@ const password = ref('');
 const errorMessage = ref('');
 const router = useRouter(); // Inicializa el router
 
-// Función de validación
-const validateUser = () => {
-  if (tipousuario.value === 'Jefe' && password.value === '1234') {
-    errorMessage.value = '';
-    router.push('/Jefe'); // Redirige a la página '/Jefe' si la validación es exitosa
-  } 
-  else if(tipousuario.value == 'Administrador' && password.value == '1234'){
-    errorMessage.value = '';
-    router.push('/Admin')
-  }
-  else if(tipousuario.value == 'Empleado' && password.value == '1234'){
-    errorMessage.value = '';
-    router.push('/Emp')
-  }
-  else {
-    errorMessage.value = 'Usuario o contraseña incorrectos'; // Mensaje de error si la validación falla
-  }
+const validacion = async () => {
+  try {
+    // Enviar solicitud al backend
+    const response = await axios.post('http://127.0.0.1:8000/login', {
+      nombre_emprendimiento: NombreEmprendimineto.value,
+      rol: tipousuario.value,
+      password: password.value
+    });
 
+    console.log('Inicio de sesión exitoso', response.data);
+
+    // Comprobar el rol del usuario para redirigir
+    const rol = response.data.rol;  // Asumiendo que en la respuesta viene el rol del usuario
+
+    if (rol === 'Jefe') {
+      router.push('/Jefe');
+    } else if (rol === 'Administrador') {
+      router.push('/Administrador');
+    } else if (rol === 'Empleado') {
+      router.push('/Empleado');
+    } else {
+      errorMessage.value = 'Rol no reconocido, por favor contacta al administrador';
+    }
+
+  } catch (error) {
+    if (error.response && error.response.data) {
+      errorMessage.value = error.response.data.detail;
+    } else {
+      errorMessage.value = 'Error desconocido, por favor intenta más tarde';
+    }
+  }
 };
+
 </script>
 <template>
     <header>
@@ -55,7 +70,7 @@ const validateUser = () => {
     <h2>Iniciar Sesión</h2>
     <p>¿Es tu primera vez? <a href="#" class="register-btn">Regístrate</a></p>
     
-    <form @submit.prevent="validateUser">
+    <form @submit.prevent="validacion">
       <label for="NombreEm">Nombre de Emprendimiento</label>
       <input type="text" v-model="NombreEmprendimineto" id="password" name="password" required />
 
