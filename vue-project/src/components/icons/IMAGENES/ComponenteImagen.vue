@@ -1,6 +1,6 @@
 <template>
     <div class="contenedor">
-      <img src="c:\Users\Sergio Garcia\Downloads\WhatsApp Image 2024-08-28 at 8.55.33 PM.jpeg" class="imagen" alt="imagen 1">
+      <img src="https://i.ibb.co/VJR2Fkf/Whats-App-Image-2024-08-28-at-8-55-33-PM-1.jpg" class="imagen" alt="imagen 1">
     </div>
 </template>
   
