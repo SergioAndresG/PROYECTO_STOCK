@@ -1,6 +1,6 @@
 <template>
     <div class="contenedor">
-      <img src="c:\Users\Sergio Garcia\Downloads\WhatsApp Image 2024-08-28 at 8.55.33 PM.jpeg" class="imagen" alt="imagen 1">
+      <img src="https://cdn-icons-png.flaticon.com/512/2849/2849121.png" class="imagen" alt="imagen 1">
     </div>
 </template>
   

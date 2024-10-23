@@ -1,6 +1,6 @@
 <template>
     <div class="contenedor">
-      <img src="C:\Users\Sergio Garcia\Downloads\WhatsApp Image 2024-08-29 at 2.24.22 PM.jpeg" class="imagen" alt="imagen 1">
+      <img src="https://e84bh8b3dtf.exactdn.com/wp-content/uploads/2020/08/User-Management-e1598275803473.png?strip=all&lossy=1&w=1920&ssl=1" class="imagen" alt="imagen 1">
     </div>
 </template>
   
