@@ -1,16 +1,44 @@
 <script setup lang="ts">
-import ComponenteImagen from './icons/IMAGENES/ComponenteImagen.vue';
+import axios from 'axios';
+import { ref, onMounted } from 'vue';
 
-const empleados = [
-  { id: 1, nombre: 'Juan Pérez' },
-  { id: 2, nombre: 'María García' },
-  { id: 3, nombre: 'Carlos Sánchez' },
-];
+const empleados = ref([]);  // Lista de empleados
+const empleadoSeleccionado = ref(null);  // Empleado seleccionado para mostrar detalles
+const mostrarModal = ref(false);  // Controla la visibilidad del modal
 
-const handleAction = (action: string, empleado: any) => {
-  alert(`${action} datos del empleado: ${empleado.nombre}`);
+// Obtener la lista de empleados desde el backend
+const obtenerEmpleados = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/empleados");
+    empleados.value = response.data;
+  } catch (error) {
+    console.log("Error al obtener los empleados", error);
+  }
 };
 
+// Función para mostrar el modal con los datos del empleado seleccionado
+const handleAction = async (action: string, empleado: any) => {
+  if (action === 'Consultar') {
+    try {
+      // Asignar los datos del empleado seleccionado para mostrarlos en el modal
+      empleadoSeleccionado.value = empleado;
+      mostrarModal.value = true;  // Mostrar el modal
+    } catch (error) {
+      console.error('Error al consultar el empleado', error);
+    }
+  } else {
+    alert(`${action} datos del empleado: ${empleado.nombre}`);
+  }
+};
+
+// Cerrar el modal
+const cerrarModal = () => {
+  mostrarModal.value = false;
+};
+
+onMounted(() => {
+  obtenerEmpleados();
+});
 </script>
 <template>
    <header>
@@ -72,21 +100,34 @@ const handleAction = (action: string, empleado: any) => {
 
     </div>
     <div class="main-content">
-    <!-- Sidebar de empleados -->
-    <aside class="sidebar">
-      <h2>Empleados</h2>
-      <ul>
-        <li v-for="empleado in empleados" :key="empleado.id">
-          {{ empleado.nombre }}
-          <div class="employee-actions">
-            <button @click="handleAction('Consultar', empleado)">Consultar</button>
-            <button @click="handleAction('Actualizar', empleado)">Actualizar</button>
-            <button @click="handleAction('Eliminar', empleado)">Eliminar</button>
-          </div>
-        </li>
-      </ul>
-    </aside>
-    </div>    
+  <aside class="sidebar">
+    <h2>Empleados</h2>
+    <ul>
+      <li v-for="empleado in empleados" :key="empleado.id">
+        {{ empleado.nombre_usuario }}
+        <div class="employee-actions">
+          <!-- Cambiado "empleados" por "empleado" -->
+          <button @click="handleAction('Consultar', empleado)">Consultar</button>
+          <button @click="handleAction('Actualizar', empleado)">Actualizar</button>
+          <button @click="handleAction('Eliminar', empleado)">Eliminar</button>
+        </div>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Modal para mostrar detalles del empleado -->
+  <div v-if="mostrarModal" class="modal">
+    <div class="modal-content">
+      <span class="close" @click="cerrarModal">&times;</span>
+      <h2>Detalles del Empleado</h2>
+      <!-- Asegúrate de que el empleado seleccionado tenga valores antes de acceder a las propiedades -->
+      <p>ID: {{ empleadoSeleccionado?.id }}</p>
+      <p>Nombre: {{ empleadoSeleccionado?.nombre_usuario }}</p>
+      <p>Correo: {{ empleadoSeleccionado?.correoElectronico }}</p>
+    </div>
+  </div>
+</div>
+
     <footer>
       <p>&copy; 2024 </p>
       
@@ -142,6 +183,39 @@ const handleAction = (action: string, empleado: any) => {
 
 @import url('https://fonts.googleapis.com/css2?family=Jura:wght@700&display=swap');
 
+
+.modal {
+  display: block; /* Mostrar el modal */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo transparente oscuro */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* Centrar el modal */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%; /* Ancho del modal */
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
 #A{
   margin-left: 41%;
   margin-top: 23px;

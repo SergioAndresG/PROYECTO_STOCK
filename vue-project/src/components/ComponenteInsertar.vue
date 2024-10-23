@@ -20,7 +20,7 @@
           <label for="nombreEmprendimiento">Nombre del Emprendimiento</label>
           <input type="text" v-model="usuario.nombreEmprendimiento" required />
         </div>
-        <div class="form-group">
+        <div class="form-group1">
           <label for="rolUsuario">Rol de Usuario</label>
           <select v-model="usuario.rol_id" required> 
             <option value="1">Administrador</option>
@@ -28,10 +28,18 @@
             <option value="3">Empleado</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="password">Contraseña</label>
-          <input type="password" v-model="usuario.contraseña" required />
+        <div class="form-group1">
+          <label for="Contaseña" id="con">Contraseña</label>
+          <input :type="usuario.passwordVisible ? 'text' : 'password'" id="contrasena" v-model="usuario.contraseña" />
+            <span @click="usuario.passwordVisible = !usuario.passwordVisible" class="toggle-password">
+              <i :class="usuario.passwordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+            </span>
         </div>
+        <label for="confirmarContrasena">Confirma la Contraseña</label>
+        <input :type="usuario.passwordVisible ? 'text' : 'password'" v-model="usuario.confirmarContraseña" @input="validarContrasena" />
+        <span @click="usuario.passwordVisible = !usuario.passwordVisible" class="toggle-password">
+              <i :class="usuario.passwordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+            </span>
         <button type="submit">Registrar</button>
         
       </form>
@@ -103,8 +111,9 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from "vue";  // Necesitamos `ref` para declarar variables reactivas
+  import { ref, computed } from "vue";  // Necesitamos `ref` para declarar variables reactivas
   import axios from "axios";
+  import Swal from 'sweetalert2';
   
   // Declarar la estructura del usuario como un objeto reactivo
   const usuario = ref({
@@ -113,17 +122,47 @@
     rol_id: "empleado", // Valor predeterminado
     contraseña: "",
     correoElectronico: "",
-    nombreEmprendimiento: ""
+    nombreEmprendimiento: "",
+    confirmarContraseña: "",
+    passwordVisible: false
   });
   
   // Definir la función para registrar el usuario
   const registrarUsuario = async () => {
+    if (!usuario.value.rol_id || !usuario.value.contraseña || !usuario.value.correoElectronico || !usuario.value.nombreEmprendimiento ||
+      !usuario.value.confirmarContraseña) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Campos incompletos',
+      text: 'Debe llenar todos los campos para registrar.',
+    });
+    return;
+  }
+
+  // Validación del correo electrónico
+  if (!usuario.value.correoElectronico.includes('@')) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Correo electrónico inválido',
+      text: 'Por favor, ingrese un correo electrónico válido.',
+    });
+    return;
+  }
+
     try {
       // Hacer la solicitud POST al backend
-      const response = await axios.post("http://localhost:8000/usuario", usuario.value);
+      const response = await axios.post("http://127.0.0.1:8000/usuario", usuario.value);
       console.log("Usuario registrado exitosamente.");
+      // Resetear formulario
       limpiarFormulario(); // Llamar a la función para limpiar el formulario
+      // Mostrar mensaje de éxito
+      Swal.fire({
+        icon: 'success',
+        title: 'Registro exitoso',
+        text: 'Emprendimiento registrado correctamente.'
+      });
       return response;  // Retornar la respuesta si es necesario
+    
     } catch (error) {
       console.error("Error al registrar usuario: ", error.response?.data?.detail || error.message);
     }
@@ -137,15 +176,76 @@
       rol_id: "empleado",
       contraseña: "",
       correoElectronico: "",
-      nombreEmprendimiento: ""
+      nombreEmprendimiento: "",
+      confirmarContraseña: "",
+      passwordVisible: false
     };
   };
 
+
+  const passwordFieldType = computed(() => (passwordFieldType.value ? 'text' : 'password'))
+
+  function validarContrasena() {
+  const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
   
+  if (!regex.test(usuario.value.contraseña)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Contraseña no válida',
+      text: 'La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales.'
+    });
+    return false; // Indica que la validación falló
+  }
+  if (usuario.value.contraseña !== usuario.value.confirmarContraseña) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Contraseña no coincide',
+      text: 'Las contraseñas no coinciden.'
+    });
+    return false; // Indica que la validación falló
+  }
+
+  return true; // Indica que la validación fue exitosa
+}
+
   </script>
 
   
   <style scoped>
+
+#con{
+  padding: 9px;
+  margin-left: -12px;
+}
+  /* Contenedor para el input y el ícono del ojo */
+.form-group1 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* Input de contraseña */
+.input-container input {
+  width: 100%;
+  padding-right: 40px; /* Espacio suficiente para el icono */
+}
+
+/* Ícono del ojo */
+.toggle-password {
+  position: absolute;
+  right: 10px; /* Espacio entre el icono y el borde derecho del input */
+  cursor: pointer;
+  color: #888;
+  font-size: 1.2em;
+  top: 9.5px;
+}
+
+/* Ajuste cuando el usuario pasa el cursor sobre el icono */
+.toggle-password:hover {
+  color: #000;
+}
+
   body::before {
         content: '';
         background-image: url('https://img.freepik.com/free-vector/background-flat-autumn-landscape_23-2148243078.jpg?t=st=1728669712~exp=1728673312~hmac=9fa26a8ab9217e2cd35e7c4785514a058e953c75d2a3361bdf63f1675802bc7c&w=996');
@@ -212,6 +312,7 @@
     cursor: pointer;
     border-radius: 25px;
     transition: background-color, 0.3s;
+    margin-top: 25px;
   }
   button:hover {
     background-color: #8F1A2C;
