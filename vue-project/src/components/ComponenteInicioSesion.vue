@@ -25,10 +25,10 @@ const validacion = async () => {
     // Comprobar el rol del usuario para redirigir
     const rol = response.data.rol;  // Asumiendo que en la respuesta viene el rol del usuario
 
-    if (rol === 'Jefe') {
+    if (rol === 'Boss') {
       router.push('/Jefe');
     } else if (rol === 'Administrador') {
-      router.push('/Administrador');
+      router.push('/Admin');
     } else if (rol === 'Empleado') {
       router.push('/Empleado');
     } else {
@@ -58,7 +58,7 @@ const validacion = async () => {
       </label>
       <ul class="menu">
         <li><router-link to="/">HOME</router-link></li>
-        <li><a href="nosotros.html">Nosotros</a></li>
+        <li><router-link to="/Nos">Nosotros</router-link></li>
         <li id="res"><router-link to="/Registro">Registrate</router-link></li>
       </ul>
     </div>

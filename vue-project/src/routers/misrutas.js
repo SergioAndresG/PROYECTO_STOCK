@@ -8,6 +8,8 @@ import ComponenteEmp from "@/components/ComponenteEmp.vue";
 import ComponenteGestion from "@/components/ComponenteGestion.vue";
 import ComponenteInsertar from "@/components/ComponenteInsertar.vue";
 
+import ComponenteNosotros from "@/components/ComponenteNosotros.vue";
+
 const routes = [
     {
         path:'/',
@@ -48,6 +50,11 @@ const routes = [
         path: '/Insert',
         name: 'Insert',
         component: ComponenteInsertar
+    },
+    {
+        path: '/Nos',
+        name: 'Nos',
+        component: ComponenteNosotros
     }
 
 ]

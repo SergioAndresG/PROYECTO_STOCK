@@ -141,7 +141,7 @@ function resetForm() {
         <ComponenteImagen/>
       <ul>
         <li><router-link to="/">HOME</router-link></li>
-        <li><a href="nosotros.html">Nosotros</a></li>
+        <li><router-link to="/Nos">Nosotros</router-link></li>
         <li id="res"><router-link to="/Inicio">Iniciar Sesion</router-link></li>
       </ul>
     </nav>
@@ -202,8 +202,8 @@ function resetForm() {
         <h2>Selección de Rol</h2>
         <label for="rol">Roles disponibles:</label>
         <select id="rol" v-model="rol">
-          <option value="Boss">Jefe</option>
-          <option value="admin">Administrador</option>
+          <option value="Jefe">Jefe</option>
+          <option value="Administrador">Administrador</option>
         </select>
       </div>
     </div>

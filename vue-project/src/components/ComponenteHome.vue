@@ -10,7 +10,7 @@
           <span></span>
         </label>
         <ul class="menu">
-          <li><a href="nosotros.html">Nosotros</a></li>
+          <li><router-link to="/Nos">Nosotros</router-link></li>
           <li><router-link to="/Inicio">Iniciar Sesión</router-link></li>
           <li id="res"><router-link to="/Registro">Registrate</router-link></li>
         </ul>

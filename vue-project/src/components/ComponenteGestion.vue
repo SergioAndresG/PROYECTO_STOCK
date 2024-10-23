@@ -25,8 +25,8 @@ const handleAction = (action: string, empleado: any) => {
         </label>
         <ul class="menu">
           <li><router-link to="/">HOME</router-link></li>
-          <li><router-link to="/Emp">Empleados</router-link></li>
-          <li><router-link to="/Admin">Administradores</router-link></li>
+          <li><router-link to="/Inicio">Empleados</router-link></li>
+          <li><router-link to="/Inicio">Administradores</router-link></li>
         </ul>
       </div>
     </nav>
